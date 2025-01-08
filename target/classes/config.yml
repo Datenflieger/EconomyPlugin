@@ -1,0 +1,7 @@
+database:
+  type: mysql # or mysql
+  host: 77.90.3.71
+  port: 3306
+  name: s2_coinsystem
+  user: u2_LCb4JFm7tp
+  password: er=rDfTzF.fp52OxdoKkcRqG

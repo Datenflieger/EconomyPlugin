@@ -1,0 +1,27 @@
+name: CoinSystem
+version: '1.0.0'
+main: de.datenflieger.coinSystem.CoinSystem
+api-version: '1.21'
+authors: [ Datenflieger ]
+depends: [Vault, PlaceholderAPI]
+commands:
+  money:
+    aliases:
+      - coins
+      - balance
+  pay:
+    aliases:
+      - sendmoney
+      - transfermoney
+      - paymoney
+      - givemoney
+      - donatemoney
+      - giftmoney
+  baltop:
+    aliases:
+      - moneytop
+      - coinstop
+      - balancetop
+      - topmoney
+      - topcoins
+      - topbalance

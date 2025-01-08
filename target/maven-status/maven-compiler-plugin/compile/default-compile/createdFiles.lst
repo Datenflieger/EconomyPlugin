@@ -1,0 +1,10 @@
+de\datenflieger\coinSystem\PlayerFirstTime.class
+de\datenflieger\coinSystem\MoneyCommand.class
+de\datenflieger\coinSystem\PayCommand.class
+de\datenflieger\coinSystem\CoinSystem.class
+de\datenflieger\coinSystem\Database.class
+de\datenflieger\coinSystem\PlayerBalance.class
+de\datenflieger\coinSystem\VaultHook.class
+de\datenflieger\coinSystem\Messages.class
+de\datenflieger\coinSystem\BaltopCommand.class
+de\datenflieger\coinSystem\placeholder\CoinSystemPlaceholder.class
