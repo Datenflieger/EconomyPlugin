@@ -70,6 +70,10 @@ public class Messages {
         return config.getString("economy").replace("%economy%", formatBalance(totalEconomy));
     }
 
+    public String getBroadcastDeathMessage() {
+        return config.getString("broadcastDeathMessage");
+    }
+
 
     public static String formatBalance(double amount) {
         if (amount >= 1000000) {

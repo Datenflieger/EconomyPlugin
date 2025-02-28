@@ -1,9 +1,9 @@
 package de.datenflieger.coinSystem;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
+import de.datenflieger.nevtroxapi.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,22 +13,28 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.profile.PlayerProfile;
+import org.bukkit.profile.PlayerTextures;
 
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.Base64;
+import java.lang.reflect.Field;
+import java.util.Base64;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 
 public class BaltopCommand implements CommandExecutor, Listener {
 
@@ -47,18 +53,52 @@ public class BaltopCommand implements CommandExecutor, Listener {
         }
 
         Player player = (Player) sender;
-        Inventory gui = Bukkit.createInventory(null, 54, "Top 10 Gelder");
+        Inventory gui = Bukkit.createInventory(null, 54, "§e§lCoins §8» §8Top 10 Gelder");
 
-        ItemStack grayPane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-        ItemMeta paneMeta = grayPane.getItemMeta();
-        paneMeta.setDisplayName("§f");
-        grayPane.setItemMeta(paneMeta);
+        // Gray pane background
+        ItemStack grayPane = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
+                .setDisplayName("§f")
+                .build();
 
-        int[] paneSlots = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 45, 46, 47, 48, 49, 50, 51, 52, 53};
-        for (int slot : paneSlots) {
-            gui.setItem(slot, grayPane);
+        // Yellow pane for inner area
+        ItemStack yellowPane = new ItemBuilder(Material.YELLOW_STAINED_GLASS_PANE)
+                .setDisplayName("§f")
+                .build();
+
+        // Polished Blackstone Button for corners
+        ItemStack cornerButton = new ItemBuilder(Material.POLISHED_BLACKSTONE_BUTTON)
+                .setDisplayName("§f")
+                .build();
+
+        // Close button
+        ItemStack closeButton = new ItemBuilder(Material.BARRIER)
+                .setDisplayName("§4Menü schließen!")
+                .setLore(Arrays.asList(" §8(§7*Linksklick§8)"))
+                .build();
+
+        // Fill background with gray panes
+        for (int i = 0; i < 54; i++) {
+            gui.setItem(i, grayPane);
         }
 
+        // Set yellow panes in the middle area (excluding border)
+        int[] yellowSlots = {
+            10, 11, 12, 13, 14, 15, 16,
+            19, 20, 21, 22, 23, 24, 25,
+            28, 29, 30, 31, 32, 33, 34,
+            37, 38, 39, 40, 41, 42, 43
+        };
+        for (int slot : yellowSlots) {
+            gui.setItem(slot, yellowPane);
+        }
+
+        // Set corner buttons
+        gui.setItem(0, cornerButton);  // Top left
+        gui.setItem(8, cornerButton);  // Top right
+        gui.setItem(45, cornerButton); // Bottom left
+        gui.setItem(53, closeButton);  // Bottom right (close button)
+
+        // Add top players
         List<PlayerBalance> topPlayers = getTopPlayers();
 
         if (topPlayers.size() > 0) {
@@ -79,70 +119,47 @@ public class BaltopCommand implements CommandExecutor, Listener {
     }
 
     private ItemStack createPlayerHead(PlayerBalance playerBalance, int rank, String rankColor) {
-        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-        SkullMeta meta = (SkullMeta) head.getItemMeta();
-
-        // Abrufen der Textur von Mojang
-        String texture = getPlayerTexture(playerBalance.getPlayerName());
-
-        if (texture != null && !texture.isEmpty()) {
-            // Setze die Textur, auch wenn der Spieler offline ist
-            GameProfile profile = new GameProfile(UUID.randomUUID(), playerBalance.getPlayerName());
-            profile.getProperties().put("textures", new Property("textures", texture));
-
-            try {
-                Field profileField = meta.getClass().getDeclaredField("profile");
-                profileField.setAccessible(true);
-                profileField.set(meta, profile);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
+        // UUID aus der Datenbank
+        String uuid = playerBalance.getPlayerName(); // Dies ist jetzt die UUID
+        String playerName = null;
+        
+        try {
+            // Versuche den Spielernamen über die Mojang API zu bekommen
+            URL url = new URL("https://api.minetools.eu/profile/" + uuid.replace("-", ""));
+            InputStreamReader reader = new InputStreamReader(url.openStream());
+            JsonObject profile = JsonParser.parseReader(reader).getAsJsonObject();
+            
+            if (!profile.get("status").getAsString().equals("ERR")) {
+                playerName = profile.get("name").getAsString();
+            }
+        } catch (Exception e) {
+            // Wenn die API nicht funktioniert, versuche es über Bukkit
+            OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
+            if (player != null) {
+                playerName = player.getName();
             }
         }
 
-        meta.setDisplayName("§7Platz " + rankColor + rank + ". §8→ " + rankColor + playerBalance.getPlayerName());
+        // Fallback wenn kein Name gefunden wurde
+        if (playerName == null) {
+            playerName = "Unbekannt";
+        }
+
+        String displayName = "§7Platz " + rankColor + rank + ". §8→ " + rankColor + playerName;
         List<String> lore = new ArrayList<>();
         lore.add("§f");
         lore.add("§8→ §7mit §e" + playerBalance.getFormattedBalance() + " §7Coins§8.");
-        meta.setLore(lore);
+
+        ItemStack head = new ItemBuilder(Material.PLAYER_HEAD)
+                .setDisplayName(displayName)
+                .setLore(lore)
+                .build();
+
+        SkullMeta meta = (SkullMeta) head.getItemMeta();
+        meta.setOwner(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
         head.setItemMeta(meta);
+
         return head;
-    }
-
-    private String getPlayerTexture(String playerName) {
-        String texture = null;
-        try {
-            URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + playerName);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String inputLine;
-            StringBuilder response = new StringBuilder();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            String jsonResponse = response.toString();
-            String uuid = jsonResponse.split("\"id\":\"")[1].split("\"")[0];
-
-            URL textureUrl = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid);
-            HttpURLConnection textureConnection = (HttpURLConnection) textureUrl.openConnection();
-            textureConnection.setRequestMethod("GET");
-            BufferedReader textureIn = new BufferedReader(new InputStreamReader(textureConnection.getInputStream()));
-            StringBuilder textureResponse = new StringBuilder();
-            while ((inputLine = textureIn.readLine()) != null) {
-                textureResponse.append(inputLine);
-            }
-            textureIn.close();
-
-            // Extrahieren der Textur-URL
-            String textureUrlString = textureResponse.toString().split("\"value\":\"")[1].split("\"")[0];
-            texture = textureUrlString;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return texture;
     }
 
     private List<PlayerBalance> getTopPlayers() {
@@ -154,8 +171,8 @@ public class BaltopCommand implements CommandExecutor, Listener {
             while (rs.next()) {
                 String uuid = rs.getString("uuid");
                 double balance = rs.getDouble("balance");
-                String playerName = Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName();
-                topPlayers.add(new PlayerBalance(playerName, balance));
+                // Direkt die UUID als String übergeben
+                topPlayers.add(new PlayerBalance(uuid, balance));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -165,8 +182,14 @@ public class BaltopCommand implements CommandExecutor, Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getView().getTitle().equals("Top 10 Gelder")) {
+        if (event.getView().getTitle().equals("§e§lCoins §8» §8Top 10 Gelder")) {
             event.setCancelled(true);
+            
+            // Handle close button click
+            if (event.getCurrentItem() != null && 
+                event.getCurrentItem().getType() == Material.BARRIER) {
+                event.getWhoClicked().closeInventory();
+            }
         }
     }
 }

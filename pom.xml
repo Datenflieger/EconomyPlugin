@@ -46,6 +46,11 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <includes>
+                    <include>plugin.yml</include>
+                    <include>config.yml</include>
+                    <include>messages.yml</include>
+                </includes>
             </resource>
         </resources>
     </build>
@@ -66,7 +71,7 @@
         <repository>
             <id>repo-nevtrox-releases</id>
             <name>Repo Nevtrox</name>
-            <url>http://nevtrox.de:8000/releases</url>
+            <url>https://repo.nevtrox.de/releases</url>
         </repository>
         <repository>
             <id>placeholderapi</id>
@@ -94,7 +99,8 @@
         <dependency>
             <groupId>de.datenflieger</groupId>
             <artifactId>NevtroxAPI</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.mojang</groupId>
@@ -106,6 +112,11 @@
             <artifactId>placeholderapi</artifactId>
             <version>2.11.6</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
         </dependency>
     </dependencies>
 </project>

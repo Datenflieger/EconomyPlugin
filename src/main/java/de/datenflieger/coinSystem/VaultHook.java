@@ -15,7 +15,6 @@ import java.util.Map;
 public class VaultHook extends AbstractEconomy {
     private final CoinSystem plugin;
     private final Database database;
-    private final Map<String, Double> balances = new HashMap<>();
 
     public VaultHook(CoinSystem plugin, Database database) {
         this.plugin = plugin;
@@ -51,7 +50,6 @@ public class VaultHook extends AbstractEconomy {
             return String.format("%.0f Coins", amount);
         }
     }
-
 
     @Override
     public String currencyNamePlural() {
@@ -115,10 +113,15 @@ public class VaultHook extends AbstractEconomy {
         return this.hasByName(playerName, amount);
     }
 
-
     private boolean hasByName(String playerName, double amount) {
-        System.out.println("has() detected! Map: " + this.balances);
-        return this.balances.getOrDefault(playerName, 0.0) >= amount;
+        OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+        try {
+            double balance = database.getBalance(player.getUniqueId().toString());
+            return balance >= amount;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
