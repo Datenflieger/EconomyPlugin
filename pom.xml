@@ -69,11 +69,6 @@
             <url>https://jitpack.io</url>
         </repository>
         <repository>
-            <id>repo-nevtrox-releases</id>
-            <name>Repo Nevtrox</name>
-            <url>https://repo.nevtrox.de/releases</url>
-        </repository>
-        <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/releases/</url>
         </repository>
@@ -94,12 +89,6 @@
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.datenflieger</groupId>
-            <artifactId>NevtroxAPI</artifactId>
-            <version>1.0.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

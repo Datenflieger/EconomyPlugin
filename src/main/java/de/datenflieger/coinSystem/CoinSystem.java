@@ -9,7 +9,6 @@ import de.datenflieger.coinSystem.listeners.PlayerFirstTime;
 import de.datenflieger.coinSystem.placeholder.CoinSystemPlaceholder;
 import de.datenflieger.coinSystem.utils.Messages;
 import de.datenflieger.coinSystem.vault.VaultHook;
-import de.datenflieger.nevtroxapi.translate.NevtroxTranslate;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -37,10 +36,6 @@ public class CoinSystem extends JavaPlugin {
             return;
         }
 
-        Bukkit.getConsoleSender().sendMessage(NevtroxTranslate.translate(("§8§l---------------------------------")));
-        Bukkit.getConsoleSender().sendMessage(NevtroxTranslate.translate(("&b&o<GRADIENT:00FA2F>NEVTROX</GRADIENT:003209> &8&o● &7&oCoin System")));
-        Bukkit.getConsoleSender().sendMessage(NevtroxTranslate.translate(("&7Plugin by &aDatenflieger")));
-        Bukkit.getConsoleSender().sendMessage(NevtroxTranslate.translate("§8§l---------------------------------"));
         getCommand("baltop").setExecutor(new BaltopCommand(database, this.messages));
         getCommand("pay").setExecutor(new PayCommand(getDatabase(), this.messages));
         MoneyCommand moneyCommand = new MoneyCommand(database, this.messages);

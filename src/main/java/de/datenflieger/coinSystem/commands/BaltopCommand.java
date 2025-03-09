@@ -1,9 +1,11 @@
 package de.datenflieger.coinSystem.commands;
 
 import de.datenflieger.coinSystem.database.Database;
+import de.datenflieger.coinSystem.utils.ItemBuilderAPI;
 import de.datenflieger.coinSystem.utils.Messages;
 import de.datenflieger.coinSystem.utils.PlayerBalance;
-import de.datenflieger.nevtroxapi.ItemBuilder;
+import net.kyori.adventure.text.Component;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -58,33 +60,27 @@ public class BaltopCommand implements CommandExecutor, Listener {
         Player player = (Player) sender;
         Inventory gui = Bukkit.createInventory(null, 54, "§e§lCoins §8» §8Top 10 Gelder");
 
-        // Gray pane background
-        ItemStack grayPane = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
-                .setDisplayName("§f")
+        ItemStack grayPane = new ItemBuilderAPI(Material.GRAY_STAINED_GLASS_PANE, 1)
+                .name(Component.text("§f"))
                 .build();
 
-        // Yellow pane for inner area
-        ItemStack yellowPane = new ItemBuilder(Material.YELLOW_STAINED_GLASS_PANE)
-                .setDisplayName("§f")
+        ItemStack yellowPane = new ItemBuilderAPI(Material.YELLOW_STAINED_GLASS_PANE, 1)
+                .name(Component.text("§f"))
                 .build();
 
-        // Polished Blackstone Button for corners
-        ItemStack cornerButton = new ItemBuilder(Material.POLISHED_BLACKSTONE_BUTTON)
-                .setDisplayName("§f")
+        ItemStack cornerButton = new ItemBuilderAPI(Material.POLISHED_BLACKSTONE_BUTTON, 1)
+                .name(Component.text("§f"))
                 .build();
 
-        // Close button
-        ItemStack closeButton = new ItemBuilder(Material.BARRIER)
-                .setDisplayName("§4Menü schließen!")
-                .setLore(Arrays.asList(" §8(§7*Linksklick§8)"))
+        ItemStack closeButton = new ItemBuilderAPI(Material.BARRIER, 1)
+                .name(Component.text("§4Menü schließen!"))
+                .addLore(Component.text(" §8(§7*Linksklick§8)"))
                 .build();
 
-        // Fill background with gray panes
         for (int i = 0; i < 54; i++) {
             gui.setItem(i, grayPane);
         }
 
-        // Set yellow panes in the middle area (excluding border)
         int[] yellowSlots = {
             10, 11, 12, 13, 14, 15, 16,
             19, 20, 21, 22, 23, 24, 25,
@@ -95,13 +91,11 @@ public class BaltopCommand implements CommandExecutor, Listener {
             gui.setItem(slot, yellowPane);
         }
 
-        // Set corner buttons
-        gui.setItem(0, cornerButton);  // Top left
-        gui.setItem(8, cornerButton);  // Top right
-        gui.setItem(45, cornerButton); // Bottom left
-        gui.setItem(53, closeButton);  // Bottom right (close button)
+        gui.setItem(0, cornerButton);  
+        gui.setItem(8, cornerButton);  
+        gui.setItem(45, cornerButton); 
+        gui.setItem(53, closeButton);  
 
-        // Add top players
         List<PlayerBalance> topPlayers = getTopPlayers();
 
         if (topPlayers.size() > 0) {
@@ -122,12 +116,10 @@ public class BaltopCommand implements CommandExecutor, Listener {
     }
 
     private ItemStack createPlayerHead(PlayerBalance playerBalance, int rank, String rankColor) {
-        // UUID aus der Datenbank
-        String uuid = playerBalance.getPlayerName(); // Dies ist jetzt die UUID
+        String uuid = playerBalance.getPlayerName();
         String playerName = null;
         
         try {
-            // Versuche den Spielernamen über die Mojang API zu bekommen
             URL url = new URL("https://api.minetools.eu/profile/" + uuid.replace("-", ""));
             InputStreamReader reader = new InputStreamReader(url.openStream());
             JsonObject profile = JsonParser.parseReader(reader).getAsJsonObject();
@@ -136,14 +128,12 @@ public class BaltopCommand implements CommandExecutor, Listener {
                 playerName = profile.get("name").getAsString();
             }
         } catch (Exception e) {
-            // Wenn die API nicht funktioniert, versuche es über Bukkit
             OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
             if (player != null) {
                 playerName = player.getName();
             }
         }
 
-        // Fallback wenn kein Name gefunden wurde
         if (playerName == null) {
             playerName = "Unbekannt";
         }
@@ -153,9 +143,9 @@ public class BaltopCommand implements CommandExecutor, Listener {
         lore.add("§f");
         lore.add("§8→ §7mit §e" + playerBalance.getFormattedBalance() + " §7Coins§8.");
 
-        ItemStack head = new ItemBuilder(Material.PLAYER_HEAD)
-                .setDisplayName(displayName)
-                .setLore(lore)
+        ItemStack head = new ItemBuilderAPI(Material.PLAYER_HEAD, 1)
+                .name(Component.text(displayName))
+                .addLore(lore.stream().map(Component::text).toArray(Component[]::new))
                 .build();
 
         SkullMeta meta = (SkullMeta) head.getItemMeta();
@@ -174,7 +164,6 @@ public class BaltopCommand implements CommandExecutor, Listener {
             while (rs.next()) {
                 String uuid = rs.getString("uuid");
                 double balance = rs.getDouble("balance");
-                // Direkt die UUID als String übergeben
                 topPlayers.add(new PlayerBalance(uuid, balance));
             }
         } catch (SQLException e) {
@@ -188,7 +177,6 @@ public class BaltopCommand implements CommandExecutor, Listener {
         if (event.getView().getTitle().equals("§e§lCoins §8» §8Top 10 Gelder")) {
             event.setCancelled(true);
             
-            // Handle close button click
             if (event.getCurrentItem() != null && 
                 event.getCurrentItem().getType() == Material.BARRIER) {
                 event.getWhoClicked().closeInventory();
