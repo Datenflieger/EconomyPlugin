@@ -1,7 +1,7 @@
 database:
   type: mysql # or mysql
-  host: 77.90.3.71
-  port: 3306
-  name: s2_coinsystem
+  host: 
+  port: 
+  name: 
   user: 
   password: 

@@ -1,4 +1,4 @@
-prefix: "§a§lNEVTROX §8• §7"
+prefix: "&e&lCoinSystem &8• &7"
 balance: "§7Ihr Guthaben§8: §e%balance% Coins"
 economy: "§7Die gesamte Server§8-§7Wirtschaft beträgt§8: §e%economy% Coins§8."
 error: "§cBeim Verarbeiten Ihrer Anfrage ist ein Fehler aufgetreten§8."

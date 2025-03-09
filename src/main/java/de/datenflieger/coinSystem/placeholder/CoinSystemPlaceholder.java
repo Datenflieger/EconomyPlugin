@@ -1,8 +1,9 @@
 package de.datenflieger.coinSystem.placeholder;
 
-import de.datenflieger.coinSystem.Database;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
+
+import de.datenflieger.coinSystem.database.Database;
 
 import java.sql.SQLException;
 
