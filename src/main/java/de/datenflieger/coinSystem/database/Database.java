@@ -1,5 +1,6 @@
 package de.datenflieger.coinSystem.database;
 
+import de.datenflieger.coinSystem.utils.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -48,7 +49,7 @@ public class Database {
 
     public String getFormattedBalance(String uuid) throws SQLException {
         double balance = getBalance(uuid); // Holt den aktuellen Kontostand
-        return formatBalance(balance);     // Formatiert den Kontostand
+        return Messages.formatBalance(balance);     // Formatiert den Kontostand
     }
 
     public double getBalance(String uuid) throws SQLException {
@@ -66,17 +67,6 @@ public class Database {
     }
 
 
-    public static String formatBalance(double amount) {
-        if (amount >= 1000000) {
-            double million = amount / 1000000.0;
-            return String.format("%.1fM", million);
-        } else if (amount >= 1000) {
-            double thousand = amount / 1000.0;
-            return String.format("%.1fk", thousand);
-        } else {
-            return String.format("%.0f", amount);
-        }
-    }
 
 
     public void setBalance(String uuid, double balance) throws SQLException {

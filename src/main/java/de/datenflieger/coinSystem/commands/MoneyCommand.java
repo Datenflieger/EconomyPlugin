@@ -29,8 +29,7 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
+            if (sender instanceof Player player) {
                 double totalEconomy = 0;
                 try {
                     totalEconomy = database.getServerWirtschaft();
@@ -68,12 +67,11 @@ public class MoneyCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 2 && (args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("give") || args[0].equalsIgnoreCase("take"))) {
-            if (!(sender instanceof Player)) {
+            if (!(sender instanceof Player player)) {
                 sender.sendMessage(messages.getPrefix() + messages.getPlayerOnlyMessage());
                 return true;
             }
 
-            Player player = (Player) sender;
             try {
                 double amount = Double.parseDouble(args[1]);
                 double balance = database.getBalance(player.getUniqueId().toString());

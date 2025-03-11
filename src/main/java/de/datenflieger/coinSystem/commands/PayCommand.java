@@ -32,12 +32,10 @@ public class PayCommand implements CommandExecutor {
             return false;
         }
 
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(messages.getPrefix() + messages.getPlayerOnlyMessage());
             return true;
         }
-
-        Player player = (Player) sender;
         
         // Check cooldown
         long currentTime = System.currentTimeMillis();
