@@ -1,5 +1,6 @@
 package de.datenflieger.coinSystem.placeholder;
 
+import de.datenflieger.coinSystem.utils.Messages;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 
@@ -48,31 +49,20 @@ public class CoinSystemPlaceholder extends PlaceholderExpansion {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            return formatBalance(balance);
+            return Messages.formatBalance(balance);
         }
 
-        if (identifier.equals("server_wirtschaft")) {
+        if (identifier.equals("server_economy")) {
             double totalBalance = 0;
             try {
                 totalBalance = database.getServerWirtschaft();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            return formatBalance(totalBalance);
+            return Messages.formatBalance(totalBalance);
         }
 
         return null;
     }
 
-    public static String formatBalance(double amount) {
-        if (amount >= 1000000) {
-            double million = amount / 1000000.0;
-            return String.format("%.1fM", million);
-        } else if (amount >= 1000) {
-            double thousand = amount / 1000.0;
-            return String.format("%.1fk", thousand);
-        } else {
-            return String.format("%.0f", amount);
-        }
-    }
 }
