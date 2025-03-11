@@ -52,12 +52,11 @@ public class BaltopCommand implements CommandExecutor, Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage("This command can only be used by players.");
             return true;
         }
 
-        Player player = (Player) sender;
         Inventory gui = Bukkit.createInventory(null, 54, "§e§lCoins §8» §8Top 10 Gelder");
 
         ItemStack grayPane = new ItemBuilderAPI(Material.GRAY_STAINED_GLASS_PANE, 1)
