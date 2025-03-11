@@ -34,7 +34,7 @@ The plugin provides the following placeholders for use with PlaceholderAPI:
 | Placeholder | Description |
 |-------------|-------------|
 | `%coinsystem_player_coins%` | Displays the player's coin balance |
-| `%coinsystem_server_wirtschaft%` | Displays the total economy of the server |
+| `%coinsystem_server_economy%` | Displays the total economy of the server |
 
 ## Installation
 
