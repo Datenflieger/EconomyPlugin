@@ -90,9 +90,11 @@ public class BaltopCommand implements CommandExecutor, Listener {
             gui.setItem(slot, yellowPane);
         }
 
-        gui.setItem(0, cornerButton);  
-        gui.setItem(8, cornerButton);  
-        gui.setItem(45, cornerButton); 
+        int[] cornerButtonsSlots = {0, 8, 45};
+        for (int slot : cornerButtonsSlots) {
+            gui.setItem(slot, cornerButton);
+        }
+
         gui.setItem(53, closeButton);  
 
         List<PlayerBalance> topPlayers = getTopPlayers();
